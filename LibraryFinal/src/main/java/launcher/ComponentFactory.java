@@ -35,7 +35,7 @@ public class ComponentFactory {
 
     }
     //e public s ar putea sa fie o pb aici
-    public ComponentFactory(Boolean componentTest, Stage primaryStage){
+    private ComponentFactory(Boolean componentTest, Stage primaryStage){
         //arbore de dependinte
         Connection connection=DatabaseConnectionFactory.getConnectionWrapper(componentTest).getConnection();
         this.bookRepository=new BookRepositoryMySQL(connection);
