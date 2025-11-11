@@ -1,8 +1,7 @@
-package repository;
+package repository.book;
 
 import model.Book;
 
-import java.io.OptionalDataException;
 import java.util.*;
 
 public interface BookRepository {
