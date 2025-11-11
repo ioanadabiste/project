@@ -17,7 +17,7 @@ import static database.Constants.Tables.RIGHT;
 import static database.Constants.Tables.ROLE;
 import static database.Constants.Tables.ROLE_RIGHT;
 import static database.Constants.Tables.USER_ROLE;
-
+//AICI SQL INJECTION!!
 public class RightsRolesRepositoryMySQL implements RightsRolesRepository {
 
     private final Connection connection;
