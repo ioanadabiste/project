@@ -46,17 +46,26 @@ public class Main {
 //        System.out.println(bookService.findAll());
 
         Connection connection=DatabaseConnectionFactory.getConnectionWrapper(true).getConnection();
+
         BookRepository bookRepository=new BookRepositoryCacheDecorator(
                 new BookRepositoryMySQL(connection),
                 new Cache<>());
         BookService bookService=new BookServiceImpl(bookRepository);
 //        Book bookMoaraCuNoroc = new BookBuilder().setTitle("Moara cu noroc").setAuthor("Ioan Slavici").setPublishedDate(LocalDate.of(1920, 2, 10)).build();
 
+        System.out.println("Hello word!");
         RightsRolesRepository rightsRolesRepository=new RightsRolesRepositoryMySQL(connection);
         UserRepository userRepository = new UserRepositoryMySQL(connection,rightsRolesRepository);
         AuthenticationService authenticationService=new AuthenticationServiceImpl(userRepository,rightsRolesRepository);
 
-        authenticationService.register("maria","parola123!");
+        if(userRepository.existsByUsername("ioana")){
+            System.out.println("Username already exists");
+        }
+        else{
+            authenticationService.register("ioana","parola123!");
+        }
         System.out.println(authenticationService.login("ioana","parola123!"));
+
     }
+
 }
