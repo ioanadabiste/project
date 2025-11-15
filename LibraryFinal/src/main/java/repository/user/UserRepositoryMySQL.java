@@ -2,6 +2,7 @@ package repository.user;
 import model.User;
 import model.builder.UserBuilder;
 //import model.validator.Notification;
+import model.validation.Notification;
 import repository.security.RightsRolesRepository;
 
 import java.sql.Connection;
@@ -59,29 +60,37 @@ public class UserRepositoryMySQL implements UserRepository {
 
     //TODO de modificat pentru SQL INJECTION!!!
     @Override
-    public User findByUsernameAndPassword(String username, String password) {
+    public Notification<User> findByUsernameAndPassword(String username, String password) {
+        Notification<User> findByUsernameAndPasswordNotification = new Notification();
         String sql = "SELECT * FROM `" + USER + "` WHERE `username` = ? AND `password` = ? LIMIT 1";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, username);
-            ps.setString(2, password); // ATENTIE: daca parolele sunt hash-uite, trimite aici hashPassword(password)
+            ps.setString(2, password);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new UserBuilder()
+                 if(rs.next()) {
+                    User user= new UserBuilder()
                             .setId(rs.getLong("id"))
                             .setUsername(rs.getString("username"))
                             .setPassword(rs.getString("password"))
                             .setRoles(rightsRolesRepository.findRolesForUser(rs.getLong("id")))
                             .build();
+                    findByUsernameAndPasswordNotification.setResult(user);
                 }
+                 else{
+                     findByUsernameAndPasswordNotification.addError("Invalid username or password!");
+                     return findByUsernameAndPasswordNotification;
+                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
         }
 
-        return null;
+        return findByUsernameAndPasswordNotification;
     }
 
+    //TODO de modificat pentru erori specifice, verifi de exists by username
     @Override
     public boolean save(User user) {
         try {

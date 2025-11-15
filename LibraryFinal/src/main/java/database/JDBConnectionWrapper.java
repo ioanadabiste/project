@@ -13,7 +13,7 @@ public class JDBConnectionWrapper {
 
     private static final String USER = "root";
 
-    private static final String PASSWORD = "";
+    private static final String PASSWORD = "root";
 
     private static final int TIMEOUT = 5;
 
@@ -24,7 +24,7 @@ public class JDBConnectionWrapper {
 
         try {
             Class.forName(JDBC_DRIVER);
-            connection = DriverManager.getConnection(DB_URL + schema + "?allowMultiQueries=true" , USER, PASSWORD);
+            connection = DriverManager.getConnection(DB_URL + schema  , USER, PASSWORD);
             createTables();
         } catch (ClassNotFoundException e)
         {
