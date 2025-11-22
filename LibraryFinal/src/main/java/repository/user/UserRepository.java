@@ -11,7 +11,7 @@ public interface UserRepository {
 
     Notification<User> findByUsernameAndPassword(String username, String password);
 
-    boolean save(User user);
+    Notification<User> save(User user);
 
     void removeAll();
 

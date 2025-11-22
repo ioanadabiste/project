@@ -37,17 +37,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
 
         UserValidator userValidator=new UserValidator(user);
-
+        Notification<Boolean> registrationNotification = new Notification<>();
         boolean userValid=userValidator.validate();
-        Notification<Boolean> userRegisterNotification =  new Notification<>();
+
         if(!userValid) {
-            userValidator.getErrors().forEach(userRegisterNotification::addError);
-            userRegisterNotification.setResult(Boolean.FALSE);
+            userValidator.getErrors().forEach(registrationNotification::addError);
+            registrationNotification.setResult(Boolean.FALSE);
+            return registrationNotification;
         } else {
             user.setPassword(hashPassword(password));
-            userRegisterNotification.setResult(userRepository.save(user));
-        }
-        return userRegisterNotification;
+            Notification<User> saveNotification = userRepository.save(user);
+
+            // Dacă există erori la save -> le propagăm în notificarea de login
+            if (saveNotification.hasError()) {
+                saveNotification.getErrors().forEach(registrationNotification::addError);
+                registrationNotification.setResult(Boolean.FALSE);
+                return registrationNotification;
+            }
+
+            // Dacă totul e OK
+            registrationNotification.setResult(Boolean.TRUE);
+            return registrationNotification;        }
     }
 
 

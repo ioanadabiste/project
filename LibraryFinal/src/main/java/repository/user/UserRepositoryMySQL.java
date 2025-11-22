@@ -27,7 +27,6 @@ public class UserRepositoryMySQL implements UserRepository {
         this.rightsRolesRepository = rightsRolesRepository;
     }
 
-    //TODO implementare
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
@@ -58,7 +57,6 @@ public class UserRepositoryMySQL implements UserRepository {
     // alexandru.ghiurutan95@gmail.com' and 1=1; --
     // ' or username LIKE '%admin%'; --
 
-    //TODO de modificat pentru SQL INJECTION!!!
     @Override
     public Notification<User> findByUsernameAndPassword(String username, String password) {
         Notification<User> findByUsernameAndPasswordNotification = new Notification();
@@ -90,27 +88,33 @@ public class UserRepositoryMySQL implements UserRepository {
         return findByUsernameAndPasswordNotification;
     }
 
-    //TODO de modificat pentru erori specifice, verifi de exists by username
     @Override
-    public boolean save(User user) {
+    public Notification<User> save(User user) {
+        Notification<User> saveNotification = new Notification();
         try {
-            PreparedStatement insertUserStatement = connection
-                    .prepareStatement("INSERT INTO user values (null, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            insertUserStatement.setString(1, user.getUsername());
-            insertUserStatement.setString(2, user.getPassword());
-            insertUserStatement.executeUpdate();
+            if(existsByUsername(user.getUsername())){
+                saveNotification.addError("Username already exists!");
+                return saveNotification;
+            }
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO user VALUES (null, ?, ?)",Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, user.getUsername());
+            statement.setString(2,user.getPassword());
+            statement.executeUpdate();
 
-            ResultSet rs = insertUserStatement.getGeneratedKeys();
-            rs.next();
-            long userId = rs.getLong(1);
-            user.setId(userId);
+            ResultSet rs = statement.getGeneratedKeys();
+            if(rs.next()){
+                long userId = rs.getLong(1);
+                user.setId(userId);
+            }
 
-            rightsRolesRepository.addRolesToUser(user, user.getRoles());
+            rightsRolesRepository.addRolesToUser(user,user.getRoles());
 
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            saveNotification.setResult(user);
+            return saveNotification;
+        }
+        catch(SQLException e){
+            saveNotification.addError("Something is wrong with the Database!");
+            return saveNotification;
         }
 
     }
@@ -126,7 +130,6 @@ public class UserRepositoryMySQL implements UserRepository {
         }
     }
 
-    //TODO sql injection!!?
     @Override
     public boolean existsByUsername(String email) {
 
