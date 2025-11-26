@@ -1,7 +1,9 @@
 package service.book;
 
 import model.Book;
+import model.Sale;
 import repository.book.BookRepository;
+import repository.sale.SaleRepository;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -9,6 +11,8 @@ import java.util.List;
 
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+
+
     public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
@@ -36,9 +40,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int getAgeOfBook(Long id) {
-        Book book=this.findById(id);
-        LocalDate now= LocalDate.now();
-        return (int) ChronoUnit.YEARS.between(book.getPublishedDate(),now);
+        Book book = this.findById(id);
+        LocalDate now = LocalDate.now();
+        return (int) ChronoUnit.YEARS.between(book.getPublishedDate(), now);
 
     }
+
 }

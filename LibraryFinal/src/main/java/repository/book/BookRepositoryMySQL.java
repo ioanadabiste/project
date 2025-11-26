@@ -52,15 +52,17 @@ public class BookRepositoryMySQL implements BookRepository {
 
     @Override
     public boolean save(Book book) {
-        String newSql = "INSERT INTO book VALUES(null, ?, ?, ?);";
+        String sql = "INSERT INTO book (author, title, publishedDate, stock, price) VALUES (?, ?, ?, ?, ?)";
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(newSql);
-            preparedStatement.setString(1, book.getAuthor());
-            preparedStatement.setString(2, book.getTitlu());
-            preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+            PreparedStatement ps = connection.prepareStatement(sql);
 
-            int rowsInserted = preparedStatement.executeUpdate();
+            ps.setString(1, book.getAuthor());
+            ps.setString(2, book.getTitlu());
+            ps.setTimestamp(3, Timestamp.valueOf(book.getPublishedDate().atStartOfDay()));
+            ps.setLong(4, book.getStock());
+            ps.setDouble(5, book.getPrice());
+            int rowsInserted = ps.executeUpdate();
 
             return (rowsInserted != 1) ? false : true;
 
@@ -103,6 +105,21 @@ public class BookRepositoryMySQL implements BookRepository {
                 .setTitle(resultSet.getString("title"))
                 .setAuthor(resultSet.getString("author"))
                 .setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate())
+                .setPrice(resultSet.getDouble("price"))
+                .setStock(resultSet.getLong("stock"))
                 .build();
+    }
+    public boolean updateStock(Long id, Long newStock) {
+        String sql = "UPDATE book SET stock = ? WHERE id = ?;";
+        try{
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1,newStock);
+            ps.setLong(2,id);
+            ps.executeUpdate();
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }

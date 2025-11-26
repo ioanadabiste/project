@@ -10,6 +10,7 @@ public interface BookRepository {
     boolean save(Book book);
     boolean delete(Book book);
     void removeAll();
+    boolean updateStock(Long id, Long newStock);
 
 
 }

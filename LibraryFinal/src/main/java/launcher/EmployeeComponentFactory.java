@@ -8,6 +8,8 @@ import repository.book.BookRepository;
 import repository.book.BookRepositoryCacheDecorator;
 import repository.book.BookRepositoryMySQL;
 import repository.book.Cache;
+import repository.sale.SaleRepository;
+import repository.sale.SaleRepositoryMySQL;
 import service.book.BookService;
 import service.book.BookServiceImpl;
 import view.BookView;
