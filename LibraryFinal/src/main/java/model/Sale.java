@@ -1,17 +1,21 @@
 package model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Sale {
     private Long id;
     private Long bookId;
+    private Long userId;
     private Long quantity;
     private Double price;
     private LocalDateTime saleDate;
     public Sale(){}
 
-    public Sale(Long bookId, Long quantity, Double price) {
+    public Sale(Long id, Long bookId, Long userId, Long quantity, Double price, LocalDate saleDate) {
+        this.id = id;
         this.bookId = bookId;
+        this.userId = userId;
         this.quantity = quantity;
         this.price = price;
         this.saleDate = LocalDateTime.now();
@@ -31,4 +35,8 @@ public class Sale {
 
     public LocalDateTime getSaleDate() { return saleDate; }
     public void setSaleDate(LocalDateTime saleDate) { this.saleDate = saleDate; }
+
+    public void setUserId(Long userId) {this.userId = userId;}
+
+    public long getUserId() {return userId;}
 }

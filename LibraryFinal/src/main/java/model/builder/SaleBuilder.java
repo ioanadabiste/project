@@ -21,6 +21,11 @@ public class SaleBuilder {
         return this;
     }
 
+    public SaleBuilder setUserId(Long userId) {
+        sale.setUserId(userId);
+        return this;
+    }
+
     public SaleBuilder setQuantity(Long quantity) {
         sale.setQuantity(quantity);
         return this;

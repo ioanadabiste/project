@@ -72,16 +72,21 @@ public class SQLTableCreationFactory {
                     "   ON DELETE CASCADE" +
                     "   ON UPDATE CASCADE);";
             case SALE -> "CREATE TABLE IF NOT EXISTS sale (" +
-                    " id INT(11) NOT NULL AUTO_INCREMENT," +
-                    " book_id INT(11) NOT NULL," +
+                    " id INT NOT NULL AUTO_INCREMENT," +
+                    " book_id INT NOT NULL," +
+                    " user_id INT NOT NULL," +
                     " quantity INT NOT NULL," +
                     " price DOUBLE NOT NULL," +
-                    " sale_date DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    " sale_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                     " PRIMARY KEY (id)," +
                     " FOREIGN KEY (book_id) REFERENCES book(id)" +
                     "     ON DELETE CASCADE" +
+                    "     ON UPDATE CASCADE," +
+                    " FOREIGN KEY (user_id) REFERENCES user(id)" +
+                    "     ON DELETE CASCADE" +
                     "     ON UPDATE CASCADE" +
                     ");";
+
 
             default -> "";
 

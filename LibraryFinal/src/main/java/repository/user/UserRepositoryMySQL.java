@@ -1,4 +1,5 @@
 package repository.user;
+import model.Role;
 import model.User;
 import model.builder.UserBuilder;
 //import model.validator.Notification;
@@ -51,6 +52,30 @@ public class UserRepositoryMySQL implements UserRepository {
 
         return users;
     }
+    @Override
+    public Notification<Boolean> delete(Long id) {
+        Notification<Boolean> notification = new Notification<>();
+
+        String sql = "DELETE FROM user WHERE id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1, id);
+            int rows = ps.executeUpdate();
+
+            if (rows == 0) {
+                notification.addError("User not found.");
+                notification.setResult(false);
+            } else {
+                notification.setResult(true);
+            }
+
+        } catch (SQLException e) {
+            notification.addError("Database error: " + e.getMessage());
+            notification.setResult(false);
+        }
+
+        return notification;
+    }
 
     // SQL Injection Attacks should not work after fixing functions
     // Be careful that the last character in sql injection payload is an empty space
@@ -87,6 +112,48 @@ public class UserRepositoryMySQL implements UserRepository {
 
         return findByUsernameAndPasswordNotification;
     }
+
+
+    @Override
+    public Notification<Boolean> update(User user) {
+        Notification<Boolean> notif = new Notification<>();
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                    "UPDATE user SET username = ?, password = ? WHERE id = ?"
+            );
+
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());
+            stmt.setLong(3, user.getId());
+
+            stmt.executeUpdate();
+
+            PreparedStatement del = connection.prepareStatement(
+                    "DELETE FROM user_role WHERE user_id = ?"
+            );
+            del.setLong(1, user.getId());
+            del.executeUpdate();
+
+            for (Role role : user.getRoles()) {
+                PreparedStatement ins = connection.prepareStatement(
+                        "INSERT INTO user_role (user_id, role_id) VALUES (?, ?)"
+                );
+                ins.setLong(1, user.getId());
+                ins.setLong(2, role.getId());
+                ins.executeUpdate();
+            }
+
+            notif.setResult(true);
+            return notif;
+
+        } catch (SQLException e) {
+            notif.addError("SQL error: " + e.getMessage());
+            notif.setResult(false);
+            return notif;
+        }
+    }
+
 
     @Override
     public Notification<User> save(User user) {
