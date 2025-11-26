@@ -5,12 +5,16 @@ import repository.book.BookRepository;
 import repository.book.BookRepositoryCacheDecorator;
 import repository.book.BookRepositoryMySQL;
 import repository.book.Cache;
+import repository.sale.SaleRepository;
+import repository.sale.SaleRepositoryMySQL;
 import repository.security.RightsRolesRepository;
 import repository.security.RightsRolesRepositoryMySQL;
 import repository.user.UserRepository;
 import repository.user.UserRepositoryMySQL;
 import service.book.BookService;
 import service.book.BookServiceImpl;
+import service.sale.SaleService;
+import service.sale.SaleServiceImpl;
 import service.user.AuthenticationService;
 import service.user.AuthenticationServiceImpl;
 
@@ -21,51 +25,36 @@ import java.time.LocalDate;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
+        Connection connection = DatabaseConnectionFactory.getConnectionWrapper(false).getConnection();
 
-//        System.out.println("Hello World!");
-//        Book book = new BookBuilder()
-//                .setTitle("Ion")
-//                .setAuthor("Liviu Rebreanu")
-//                .setPublishedDate(LocalDate.of(1910,10,20))
-//                .build();
-//
-//        System.out.println(book);
-//    //bookRepository.save(new BookBuilder().setTitle("Moara cu noroc").setAuthor("Ioan Slavici").setPublishedDate(LocalDate.of(1920,2,10)).build());
-//        BookRepository bookRepository = new BookRepositoryMock();
-//
-//        bookRepository.save(book);
-//        bookRepository.save(new BookBuilder().setTitle("Moara cu noroc").setAuthor("Ioan Slavici").setPublishedDate(LocalDate.of(1920,2,10)).build());
-//        System.out.println(bookRepository.findAll());
-//        bookRepository.removeAll();
-//        System.out.println(bookRepository.findAll());
-//        bookService.save(bookMoaraCuNoroc);
-//        System.out.println(bookService.findAll());
-//        bookService.delete(bookMoaraCuNoroc);
-//        bookService.delete(book);
-//        bookService.save(book);
-//        System.out.println(bookService.findAll());
+        BookRepository bookRepo = new BookRepositoryMySQL(connection);
+        SaleRepository saleRepo = new SaleRepositoryMySQL(connection);
+        BookService bookService = new BookServiceImpl(bookRepo);
+        SaleService saleService = new SaleServiceImpl(saleRepo,bookService, bookRepo);
 
-        Connection connection=DatabaseConnectionFactory.getConnectionWrapper(true).getConnection();
+        Book book = new BookBuilder()
+                .setTitle("Ion")
+                .setAuthor("Liviu Rebreanu")
+                .setPublishedDate(LocalDate.now())
+                .setStock(10L)
+                .setPrice(50.0)
+                .build();
 
-        BookRepository bookRepository=new BookRepositoryCacheDecorator(
-                new BookRepositoryMySQL(connection),
-                new Cache<>());
-        BookService bookService=new BookServiceImpl(bookRepository);
-//        Book bookMoaraCuNoroc = new BookBuilder().setTitle("Moara cu noroc").setAuthor("Ioan Slavici").setPublishedDate(LocalDate.of(1920, 2, 10)).build();
+        bookRepo.save(book);
 
-        System.out.println("Hello word!");
-        RightsRolesRepository rightsRolesRepository=new RightsRolesRepositoryMySQL(connection);
-        UserRepository userRepository = new UserRepositoryMySQL(connection,rightsRolesRepository);
-        AuthenticationService authenticationService=new AuthenticationServiceImpl(userRepository,rightsRolesRepository);
+        System.out.println("Book created!");
+        Long bookId = 1L;
+        boolean ok = saleService.processSale(bookId, 3L);
 
-        if(userRepository.existsByUsername("ioana")){
-            System.out.println("Username already exists");
+        if (ok) {
+            System.out.println("Sale inserted and stock updated!");
+        } else {
+            System.out.println("Sale failed!");
         }
-        else{
-            authenticationService.register("ioana","parola123!");
-        }
-        System.out.println(authenticationService.login("ioana","parola123!"));
 
+        bookRepo.findById(bookId).ifPresent(b ->
+                System.out.println("New stock: " + b.getStock())
+        );
     }
 
 }

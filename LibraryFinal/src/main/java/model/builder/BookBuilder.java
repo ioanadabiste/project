@@ -28,6 +28,15 @@ public class BookBuilder {
         book.setPublishedDate(publishedDate);
         return this;
     }
+    public BookBuilder setPrice(Double price) {
+        book.setPrice(price);
+        return this;
+    }
+
+    public BookBuilder setStock(Long stock) {
+        book.setStock(stock);
+        return this;
+    }
     public Book build(){
         return book;
     }

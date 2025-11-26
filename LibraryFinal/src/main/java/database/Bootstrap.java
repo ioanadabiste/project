@@ -38,15 +38,15 @@ public class Bootstrap {
             //drop sterge tabelul
             //puteam face direct drop table
             String[] dropStatements = {
-                    "TRUNCATE `role_right`;",
-                    "DROP TABLE `role_right`;",
-                    "TRUNCATE `right`;",
-                    "DROP TABLE `right`;",
-                    "TRUNCATE `user_role`;",
-                    "DROP TABLE `user_role`;",
-                    "TRUNCATE `role`;",
-                    "DROP TABLE  `book`, `role`, `user`;"
+                    "DROP TABLE IF EXISTS role_right;",
+                    "DROP TABLE IF EXISTS user_role;",
+                    "DROP TABLE IF EXISTS `right`;",
+                    "DROP TABLE IF EXISTS role;",
+                    "DROP TABLE IF EXISTS sale;",
+                    "DROP TABLE IF EXISTS book;",
+                    "DROP TABLE IF EXISTS user;"
             };
+
 
             Arrays.stream(dropStatements).forEach(dropStatement -> {
                 try {

@@ -56,4 +56,8 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator {
         cache.invalidateCache();
         decoratorBookRepository.removeAll();
     }
+    public boolean updateStock(Long id, Long newStock) {
+        cache.invalidateCache();
+        return decoratorBookRepository.updateStock(id, newStock);
+    }
 }
