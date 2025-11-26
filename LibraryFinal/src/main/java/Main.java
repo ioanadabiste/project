@@ -43,8 +43,13 @@ public class Main {
         bookRepo.save(book);
 
         System.out.println("Book created!");
-        Long bookId = 1L;
-        boolean ok = saleService.processSale(bookId, 3L);
+        Long bookId = bookRepo.findAll().get(0).getId();
+
+        // Un user fictiv cu id = 1 (employee)
+        Long userId = 1L;
+
+        // 2. Facem o vânzare de 3 bucăți
+        boolean ok = saleService.processSale(bookId, userId, 3L);
 
         if (ok) {
             System.out.println("Sale inserted and stock updated!");

@@ -1,24 +1,41 @@
 package view.model.builder;
 
-import model.builder.BookBuilder;
 import view.model.BookDTO;
 
 public class BookDTOBuilder {
-    private BookDTO bookDTO;
+
+    private final BookDTO dto;
+
     public BookDTOBuilder() {
-        bookDTO = new BookDTO();
+        dto = new BookDTO();
     }
 
-    public BookDTOBuilder setAuthor(String author){
-        bookDTO.setAuthor(author);
-        return this;
-    }
-    public BookDTOBuilder setTitle(String title){
-        bookDTO.setTitle(title);
+    public BookDTOBuilder setId(Long id) {
+        dto.setId(id);
         return this;
     }
 
-    public BookDTO build(){
-        return bookDTO;
+    public BookDTOBuilder setTitle(String title) {
+        dto.setTitle(title);
+        return this;
+    }
+
+    public BookDTOBuilder setAuthor(String author) {
+        dto.setAuthor(author);
+        return this;
+    }
+
+    public BookDTOBuilder setStock(Long stock) {
+        dto.setStock(stock);
+        return this;
+    }
+
+    public BookDTOBuilder setPrice(Double price) {
+        dto.setPrice(price);
+        return this;
+    }
+
+    public BookDTO build() {
+        return dto;
     }
 }

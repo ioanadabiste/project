@@ -13,6 +13,7 @@ public class BookController {
     private final BookView bookView;
     //in niciun ca bookRepository
     private final BookService bookService;
+
     public BookController(BookView bookView, BookService bookService) {
         this.bookView = bookView;
         this.bookService = bookService;
@@ -45,25 +46,24 @@ public class BookController {
 
         }
     }
-    private class DeleteButtonListener implements javafx.event.EventHandler {
-
+    private class DeleteButtonListener implements EventHandler<ActionEvent> {
         @Override
-        public void handle(Event event) {
-            BookDTO bookDTO=(BookDTO)bookView.getBookTableView().getSelectionModel().getSelectedItem();
-            if(bookDTO!=null){
-                boolean deleteSuccessful= bookService.delete(BookMapper.convertBookDTOToBook(bookDTO));
-                if(deleteSuccessful){
-                    bookView.addDisplayAlertMessage("Book deleted","Book Deleted", "Book was successfully deleted");
-                    bookView.deleteBookFromObservableList(bookDTO);
+        public void handle(ActionEvent actionEvent) {
+                BookDTO bookDTO=(BookDTO)bookView.getBookTableView().getSelectionModel().getSelectedItem();
+                if(bookDTO!=null){
+                    boolean deleteSuccessful= bookService.delete(BookMapper.convertBookDTOToBook(bookDTO));
+                    if(deleteSuccessful){
+                        bookView.addDisplayAlertMessage("Book deleted","Book Deleted", "Book was successfully deleted");
+                        bookView.deleteBookFromObservableList(bookDTO);
+                    }
+                    else{
+                        bookView.addDisplayAlertMessage("Delete Error","Problem at deleting book", "There was a problem with the database. Please try again");
+
+                    }
                 }
                 else{
-                    bookView.addDisplayAlertMessage("Delete Error","Problem at deleting book", "There was a problem with the database. Please try again");
-
+                    bookView.addDisplayAlertMessage("Delete Error","Problem at deleting Book", "You must select a book before pressing the delete button");
                 }
-            }
-            else{
-                bookView.addDisplayAlertMessage("Delete Error","Problem at deleting Book", "You must select a book before pressing the delete button");
-            }
         }
     }
 }

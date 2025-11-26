@@ -70,6 +70,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public boolean logout(User user) {
         return false;
     }
+    public String encodePassword(String password) {
+        return hashPassword(password);
+    }
 
     private String hashPassword(String password) {
         try {
