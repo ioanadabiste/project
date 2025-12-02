@@ -1,14 +1,16 @@
-package controller;
+package controller.admin;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import service.admin.UserManagementService;
+import service.report.ReportSevice;
 import service.user.AuthenticationService;
 import view.admin.AdminView;
 import view.admin.ManageUsersView;
 import view.admin.ManageStockView;
 import service.book.BookService;
+import view.admin.ReportView;
 
 public class AdminController {
 
@@ -16,19 +18,22 @@ public class AdminController {
     private final UserManagementService userManagementService;
     private final BookService bookService;
     private final AuthenticationService authenticationService;
-
+    private final ReportSevice reportSevice;
     public AdminController(AdminView adminView,
                            UserManagementService userManagementService,
                            BookService bookService,
-                           AuthenticationService authenticationService) {
+                           AuthenticationService authenticationService,
+                           ReportSevice reportSevice) {
 
         this.adminView = adminView;
         this.userManagementService = userManagementService;
         this.bookService = bookService;
         this.authenticationService = authenticationService;
+        this.reportSevice = reportSevice;
 
         adminView.addManageUsersListener(new ManageUsersHandler());
         adminView.addManageStockListener(new ManageStockHandler());
+        adminView.addGenerateReportListener(new ReportHandler());
     }
 
 
@@ -61,6 +66,15 @@ public class AdminController {
 
             new ManageStockController(view, bookService);
 
+        }
+    }
+    private class ReportHandler implements EventHandler<ActionEvent> {
+        @Override
+        public void handle(ActionEvent event) {
+            Stage stage = new Stage();
+            ReportView view = new ReportView(stage);
+            new ReportController(view, reportSevice);
+            stage.show();
         }
     }
 
