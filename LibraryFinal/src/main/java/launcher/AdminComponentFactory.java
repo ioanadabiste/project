@@ -1,9 +1,11 @@
 package launcher;
 
-import controller.AdminController;
+import controller.admin.AdminController;
 import database.DatabaseConnectionFactory;
 import javafx.stage.Stage;
 import repository.book.BookRepositoryMySQL;
+import repository.sale.SaleRepository;
+import repository.sale.SaleRepositoryMySQL;
 import repository.security.RightsRolesRepository;
 import repository.security.RightsRolesRepositoryMySQL;
 import repository.user.UserRepository;
@@ -12,6 +14,8 @@ import service.admin.UserManagementService;
 import service.admin.UserManagementServiceImpl;
 import service.book.BookService;
 import service.book.BookServiceImpl;
+import service.report.ReportServiceImpl;
+import service.report.ReportSevice;
 import service.user.AuthenticationService;
 import service.user.AuthenticationServiceImpl;
 import view.admin.AdminView;
@@ -25,7 +29,10 @@ public class AdminComponentFactory {
     private final UserRepository userRepository;
     private final BookRepositoryMySQL bookRepository;
     private final RightsRolesRepository rightsRolesRepository;
+    private final SaleRepository saleRepository;
 
+
+    private final ReportSevice reportService;
     private final AuthenticationService authenticationService;
     private final UserManagementService userManagementService;
     private final BookService bookService;
@@ -48,16 +55,21 @@ public class AdminComponentFactory {
         this.rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
         this.userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
         this.bookRepository = new BookRepositoryMySQL(connection);
+        this.saleRepository = new SaleRepositoryMySQL(connection);
+
+        this.reportService=new ReportServiceImpl(saleRepository);
         this.authenticationService = new AuthenticationServiceImpl(userRepository, rightsRolesRepository);
         this.userManagementService = new UserManagementServiceImpl(userRepository, rightsRolesRepository, authenticationService);
         this.bookService = new BookServiceImpl(bookRepository);
+
         this.adminView = new AdminView(new Stage());
         this.adminController =
                 new AdminController(
                         adminView,
                         userManagementService,
                         bookService,
-                        authenticationService
+                        authenticationService,
+                        reportService
                 );
     }
 }
