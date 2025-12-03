@@ -7,7 +7,7 @@ import mapper.BookMapper;
 import repository.book.BookRepository;
 import repository.book.BookRepositoryCacheDecorator;
 import repository.book.BookRepositoryMySQL;
-import repository.book.Cache;
+import repository.Cache;
 import service.book.BookService;
 import service.book.BookServiceImpl;
 import view.CustomerView;
