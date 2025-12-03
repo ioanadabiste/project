@@ -1,4 +1,4 @@
-package repository.book;
+package repository;
 
 import java.util.List;
 
